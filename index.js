@@ -1,5 +1,5 @@
 // 1 - Tester le lien de l'API dans le navigateur (https://restcountries.com/v3.1/all)
-
+let flagito = [];
 let flag = [];
 const coutryContainer = document.querySelector(".countries-container");
 const input = document.getElementById("inputSearch");
@@ -9,11 +9,92 @@ const minToMax = document.getElementById("minToMax");
 const maxToMin = document.getElementById("maxToMin");
 const alpha = document.getElementById("alpha");
 
+
+const fetchPays = async () => {
+   
+    let url ="https://restcountries.com/v3.1/all";
+    await fetch(url)
+    .then((res) => res.json())
+    .then((data) => {
+      
+        
+        flagito = data
+        console.log(flagito);
+        console.log(url);
+        
+        
+      minToMax.addEventListener("click", () => {
+        coutryContainer.innerHTML =  flagito.slice(0, 250).sort((a, b) => b.population - a.population).map((data) =>
+              `
+           <article class="pays">
+          <img src=${data.flags.png} alt="drapeau du ${data.name.common}">
+          <h2> ${data.name.common}</h2>
+          <h3> ${data.population}<h3>
+           </article>
+           `
+          );
+        console.log(maxToMin);
+      });
+
+      maxToMin.addEventListener("click", () => {
+        // La mmethode slice sert a filtrer le nombre de pays rechercher (entre 0 et le nombre de l'input range)
+        // La methode sort sert faire un nouvelle array en fonction du filitre choisis, ici la population 
+        coutryContainer.innerHTML = flagito.slice(0, 250).sort((a, b) => a.population - b.population).map((data) =>
+              `
+   <article class="pays">
+  <img src=${data.flags.png} alt="drapeau du ${data.name.common}">
+  <h2> ${data.name.common}</h2>
+  <h3> ${data.population}<h3>
+   </article>
+   `
+          );
+        console.log(maxToMin);
+      });
+
+      alpha.addEventListener("click", () => {
+        // localcompare sert a comparé des string 
+        coutryContainer.innerHTML = flagito.slice(0, 250).sort((a, b) => a.name.common.localeCompare(b.name.common)).map((data) =>
+              `
+           <article class="pays">
+          <img src=${data.flags.png} alt="drapeau du ${data.name.common}">
+          <h2> ${data.name.common}</h2>
+          <h3> ${data.population}<h3>
+           </article>
+           `
+          );
+        console.log(alpha);
+      });
+
+
+      
+
+
+        coutryContainer.innerHTML = flagito.map((data) =>              
+            `
+        <article class="pays">
+        <img src=${data.flags.png} alt="drapeau du ${data.name.common}">
+        <h2> ${data.name.common}</h2>
+        <h3> ${data.population}<h3>
+        </article>
+        `
+    
+    );
+    
+})
+}
+window.addEventListener("load", fetchPays)
+
+// ******************************************************************
+
+
+
 inputRange.addEventListener("change", () => {
   if (inputRange.value) {
     inputRangeContainer.textContent = inputRange.value;
   }
 });
+
+// ********************************************************************
 
 const produitCarte = async () => {
   let url = "https://restcountries.com/v3.1/name/" + `${input.value}`;
@@ -82,7 +163,7 @@ const produitCarte = async () => {
        <article class="pays">
       <img src=${data.flags.png} alt="drapeau du ${data.name.common}">
       <h2> ${data.name.common}</h2>
-      <h3> ${data.population}<h3>
+      <h3> S${data.population}<h3>
        </article>
        `
       );
@@ -93,10 +174,12 @@ const produitCarte = async () => {
     });
 };
 
-document.addEventListener("keydown", (e) => {
+// *******************************************************************************************
+
+input.addEventListener("input", () => {
   if (input.value === "") {
     coutryContainer.textContent = `Le champ est vide`;
-  } else if (e.key === "Enter") {
+  } else {
     produitCarte();
   }
 });
